@@ -1,0 +1,1 @@
+Use this library to create OAuth Authorization Headers using previously-obtained OAuth keys/secrets. Useful if you want to make your own HTTP request objects instead of using the ones created for you using the commonly-used OAuth gem.
