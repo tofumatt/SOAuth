@@ -30,7 +30,7 @@ Create an OAuth header by specifying the URI of the resource you're requesting, 
 	}
 	oauth_header = SOAuth.header(uri, oauth, params)
 
-Pretty straightforward.
+Pretty straightforward. You can use whatever HTTP library you like, just use `oauth_header` as the "Authorization" HTTP header to your request (making sure the request info is the same info you passed to SOAuth).
 
 ## Why Would I Want This? ##
 
