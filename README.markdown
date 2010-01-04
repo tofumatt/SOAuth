@@ -15,7 +15,7 @@ If you don't already have [Gemcutter](http://gemcutter.org/) setup as one of you
 
 ## Usage ##
 
-Create an OAuth header by specifying the URI of the resource you're requesting, your consumer key/secret and access key/secret in a hash and (optionally) any GET params in another hash. Check it out:
+Create an OAuth header by specifying the URI of the resource you're requesting, your consumer key/secret + access key/secret in a hash, and -- optionally -- any GET params in another hash. Check it out:
 
 	uri = 'https://twitter.com/direct_messages.json'
 	oauth = {
