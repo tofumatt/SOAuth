@@ -24,8 +24,8 @@ class SOAuth
 		# Make sure we support the signature signing method specified
 		raise UnsupportedSignatureMethod unless !oauth[:signature_method] || SUPPORTED_SIGNATURE_METHODS.include?(oauth[:signature_method].to_s)
 		
-		oauth[:signature_method] ||= "HMAC-SHA1"
-		oauth[:version] ||= "1.0"
+		oauth[:signature_method] ||= "HMAC-SHA1" # HMAC-SHA1 seems popular, so it's the default
+		oauth[:version] ||= "1.0" # Assumed version, according to the spec
 		oauth[:nonce] ||= Base64.encode64(OpenSSL::Random.random_bytes(32)).gsub(/\W/, '')
 		oauth[:timestamp] ||= Time.now.to_i
 		
