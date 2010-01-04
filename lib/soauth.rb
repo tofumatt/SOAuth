@@ -29,19 +29,21 @@ class SOAuth
 		oauth[:nonce] ||= Base64.encode64(OpenSSL::Random.random_bytes(32)).gsub(/\W/, '')
 		oauth[:timestamp] ||= Time.now.to_i
 		
+		# Make a copy of the params hash so we don't add in OAuth stuff
 		sig_params = params.dup
 		
 		oauth.each { |k, v|
+			# OAuth wants this to be "token"; change the hash key
 			if k == :access_key
 				sig_params['oauth_token'] = v
-			else
-				sig_params['oauth_' + k.to_s] = v unless k == :realm || k == :consumer_secret || k == :access_secret
+			# Only use certain OAuth values for the base string
+			elsif [:consumer_key, :signature_method, :version, :nonce, :timestamp].include?(k)
+				sig_params['oauth_' + k.to_s] = v
 			end
 		}
 		
 		secret = "#{escape(oauth[:consumer_secret])}&#{escape(oauth[:access_secret])}"
-		sig_base = (http_method||'get').to_s.upcase + '&' + escape(uri) + '&' +	normalize(params)
-		puts sig_base
+		sig_base = (http_method||'get').to_s.upcase + '&' + escape(uri) + '&' +	normalize(sig_params)
 		oauth_signature = Base64.encode64(OpenSSL::HMAC.digest(DIGEST, secret, sig_base)).chomp.gsub(/\n/,'')
 		
 		%{OAuth } + (%{oauth_realm="#{oauth[:realm]}", } unless !oauth[:realm]).to_s + %{oauth_consumer_key="#{oauth[:consumer_key]}", oauth_token="#{oauth[:access_key]}", oauth_signature_method="#{oauth[:signature_method]}", oauth_signature="#{escape(oauth_signature)}", oauth_timestamp="#{oauth[:timestamp]}", oauth_nonce="#{oauth[:nonce]}", oauth_version="#{oauth[:version]}"}
