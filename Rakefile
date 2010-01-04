@@ -1,6 +1,6 @@
 require 'rake/rdoctask'
 
-# Make me some RDoc (use Allison, because it's pretty)
+# Make me some RDoc
 Rake::RDocTask.new do |rdoc|
   files = ['README.markdown', 'LICENSE', 'lib/*.rb', 'test/*.rb']
   rdoc.rdoc_files.add(files)
