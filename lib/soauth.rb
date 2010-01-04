@@ -29,10 +29,19 @@ class SOAuth
 		oauth[:nonce] ||= Base64.encode64(OpenSSL::Random.random_bytes(32)).gsub(/\W/, '')
 		oauth[:timestamp] ||= Time.now.to_i
 		
-		oauth.each { |k, v| params['oauth_' + k.to_s] = v unless k == :realm }
+		sig_params = params.dup
+		
+		oauth.each { |k, v|
+			if k == :access_key
+				sig_params['oauth_token'] = v
+			else
+				sig_params['oauth_' + k.to_s] = v unless k == :realm || k == :consumer_secret || k == :access_secret
+			end
+		}
 		
 		secret = "#{escape(oauth[:consumer_secret])}&#{escape(oauth[:access_secret])}"
 		sig_base = (http_method||'get').to_s.upcase + '&' + escape(uri) + '&' +	normalize(params)
+		puts sig_base
 		oauth_signature = Base64.encode64(OpenSSL::HMAC.digest(DIGEST, secret, sig_base)).chomp.gsub(/\n/,'')
 		
 		%{OAuth } + (%{oauth_realm="#{oauth[:realm]}", } unless !oauth[:realm]).to_s + %{oauth_consumer_key="#{oauth[:consumer_key]}", oauth_token="#{oauth[:access_key]}", oauth_signature_method="#{oauth[:signature_method]}", oauth_signature="#{escape(oauth_signature)}", oauth_timestamp="#{oauth[:timestamp]}", oauth_nonce="#{oauth[:nonce]}", oauth_version="#{oauth[:version]}"}
@@ -67,20 +76,4 @@ class SOAuth
     end * "%26"
   end
 	
-end
-
-# TextMate <3
-if __FILE__ == $0
-	oauth = {
-		:consumer_key => 'konsume',
-		:consumer_secret => 'my_secret',
-		:access_key => 'actess',
-		:access_secret => 'your_secret'
-	}
-	params = {
-		'count' => '11',
-		'since_id' => '5000'
-	}
-	
-	puts SOAuth.header('http://twitter.com/direct_messages.json', oauth, params)
 end
