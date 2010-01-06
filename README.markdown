@@ -3,6 +3,10 @@
 
 *SOAuth* is a Ruby library that **creates HTTP headers for OAuth Authorization** using previously-obtained OAuth keys/secrets. Useful if you want to make your own HTTP request objects instead of using the ones created for you using the [commonly-used OAuth gem](http://github.com/mojodna/oauth).
 
+It should be noted that this was developed without edge cases in mind -- it was pretty much abstracted from my "by-hand" signing of OAuth requests in [Prey Fetcher](http://preyfetcher.com), so don't consider it production-quality code (though it [is running in production](http://preyfetcher.com)).
+
+Please fork away and send me a pull request if you think you can make it better or handle more use cases.
+
 ## Installation ##
 
 Assuming you have [Gemcutter](http://gemcutter.org/) setup as a gem source, install like any other Ruby gem:
@@ -30,13 +34,15 @@ Create an OAuth header by specifying the URI of the resource you're requesting, 
 	}
 	oauth_header = SOAuth.header(uri, oauth, params)
 
-Pretty straightforward. You can use whatever HTTP library you like, just use `oauth_header` as the "Authorization" HTTP header to your request (making sure the request info is the same info you passed to SOAuth).
+Pretty straightforward. You can use whatever HTTP library you like, just use `oauth_header` as the "Authorization" HTTP header to your request (making sure the request info is the same info you passed to SOAuth). Say you were using **NET::HTTP**:
+
+	http_uri = URI.parse(uri)
+	request = Net::HTTP.new(http_uri.host, http_uri.port)
+	request.get(uri.request_uri, {'Authorization', oauth_header})
 
 ## Why Would I Want This? ##
 
-There's already a pretty nice [OAuth library for Ruby out there](http://github.com/mojodna/oauth). But I didn't want to have to use the OAuth library just to make my Authorization headers, and I wanted to be able to plug those headers into whatever HTTP library I wanted (in my case, [Typhoeus](http://github.com/pauldix/typhoeus)*).
-
-*As of writing, I know that Typhoeus support is totally getting added into the OAuth gem -- I found it clunky and preferred this solution. In the future, if something even better than Typhoeus comes around, you can switch the library you use for making your authorized requests easily and with haste.
+There's already a pretty nice [OAuth library for Ruby out there](http://github.com/mojodna/oauth). But I didn't want to have to use the OAuth library just to make my Authorization headers, and I wanted to be able to plug those headers into whatever HTTP library I wanted (in my case, [Typhoeus](http://github.com/pauldix/typhoeus)). I found using the [OAuth gem](http://github.com/mojodna/oauth) incredibly clunky/overkill for signing requests by hand, so I made SOAuth.
 
 ## License ##
 
