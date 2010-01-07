@@ -25,8 +25,8 @@ Create an OAuth header by specifying the URI of the resource you're requesting, 
 	oauth = {
 		:consumer_key => "consumer_key",
 		:consumer_secret => "consumer_secret",
-		:access_key => "access_key",
-		:access_secret => "access_secret"
+		:token => "access_key",
+		:token_secret => "access_secret"
 	}
 	params = {
 		'count' => "11",

@@ -13,8 +13,8 @@ class SOAuthTest < Test::Unit::TestCase
   OAUTH_REQ_PARAMS = {
     :consumer_key => "consumer_key",
     :consumer_secret => "consumer_secret",
-    :access_key => "access_key",
-    :access_secret => "access_secret"
+    :token => "access_key",
+    :token_secret => "access_secret"
   }
   
   # Make sure the custom nonce is used

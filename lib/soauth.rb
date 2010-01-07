@@ -20,7 +20,7 @@ class SOAuth
   # Return an {OAuth "Authorization" HTTP header}[http://oauth.net/core/1.0/#auth_header] from request data
   def header(uri, oauth, params = {}, http_method = :get)
     # Raise an exception if we're missing required OAuth params
-    raise MissingOAuthParams if !oauth.is_a?(Hash) || !oauth.has_key?(:consumer_key) || !oauth.has_key?(:consumer_secret) || !oauth.has_key?(:access_key) || !oauth.has_key?(:access_secret)
+    raise MissingOAuthParams if !oauth.is_a?(Hash) || !oauth.has_key?(:consumer_key) || !oauth.has_key?(:consumer_secret) || !oauth.has_key?(:token) || !oauth.has_key?(:token_secret)
     # Make sure we support the signature signing method specified
     raise UnsupportedSignatureMethod unless !oauth[:signature_method] || SUPPORTED_SIGNATURE_METHODS.include?(oauth[:signature_method].to_s)
     
@@ -33,22 +33,19 @@ class SOAuth
     sig_params = params.dup
     
     oauth.each { |k, v|
-      # OAuth wants this to be "token"; change the hash key
-      if k == :access_key
-        sig_params['oauth_token'] = v
       # Only use certain OAuth values for the base string
-      elsif [:consumer_key, :signature_method, :version, :nonce, :timestamp].include?(k)
+      if [:consumer_key, :token, :signature_method, :version, :nonce, :timestamp].include?(k)
         sig_params['oauth_' + k.to_s] = v
       end
     }
     
-    secret = "#{escape(oauth[:consumer_secret])}&#{escape(oauth[:access_secret])}"
+    secret = "#{escape(oauth[:consumer_secret])}&#{escape(oauth[:token_secret])}"
     sig_base = (http_method||'get').to_s.upcase + '&' + escape(uri) + '&' + normalize(sig_params)
     oauth_signature = Base64.encode64(OpenSSL::HMAC.digest(DIGEST, secret, sig_base)).chomp.gsub(/\n/,'')
     
     oauth.merge!(:signature => oauth_signature)
     
-    %{OAuth } + (oauth.map { |k, v| %{oauth_#{(k == :access_key) ? 'token' : k}="#{escape(v)}", } unless [:consumer_secret, :access_secret].include?(k) }).to_s.chomp(", ")
+    %{OAuth } + (oauth.map { |k, v| %{oauth_#{k}="#{escape(v)}", } unless [:consumer_secret, :token_secret].include?(k) }).to_s.chomp(", ")
   end
   
   # Utility class used to sign a request and return an
