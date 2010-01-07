@@ -46,7 +46,9 @@ class SOAuth
     sig_base = (http_method||'get').to_s.upcase + '&' + escape(uri) + '&' + normalize(sig_params)
     oauth_signature = Base64.encode64(OpenSSL::HMAC.digest(DIGEST, secret, sig_base)).chomp.gsub(/\n/,'')
     
-    %{OAuth } + (%{oauth_realm="#{oauth[:realm]}", } unless !oauth[:realm]).to_s + %{oauth_consumer_key="#{oauth[:consumer_key]}", oauth_token="#{oauth[:access_key]}", oauth_signature_method="#{oauth[:signature_method]}", oauth_signature="#{escape(oauth_signature)}", oauth_timestamp="#{oauth[:timestamp]}", oauth_nonce="#{oauth[:nonce]}", oauth_version="#{oauth[:version]}"}
+    oauth.merge!(:signature => oauth_signature)
+    
+    %{OAuth } + (oauth.map { |k, v| %{oauth_#{(k == :access_key) ? 'token' : k}="#{escape(v)}", } unless [:consumer_secret, :access_secret].include?(k) }).to_s.chomp(", ")
   end
   
   # Utility class used to sign a request and return an
