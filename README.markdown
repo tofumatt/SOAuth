@@ -9,13 +9,9 @@ Please fork away and send me a pull request if you think you can make it better 
 
 ## Installation ##
 
-Assuming you have [Gemcutter](http://gemcutter.org/) setup as a gem source, install like any other Ruby gem:
+Install like any other Ruby gem:
 
 	gem install soauth
-
-If you don't already have [Gemcutter](http://gemcutter.org/) setup as one of your gem sources, install SOAuth with the following command:
-
-	gem install soauth --source http://gemcutter.org/
 
 ## Usage ##
 
