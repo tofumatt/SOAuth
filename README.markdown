@@ -1,4 +1,8 @@
 # SOAuth #
+## This library is unmaintained and buggy at best ##
+
+I don't work on SOAuth anymore, though that may soon change. In the meantime, if you're looking for a Ruby library to easily generate OAuth headers for your requests: check out [ROAuth](http://github.com/maccman/roauth).
+
 ## The "S" is for "Signs" ##
 
 *SOAuth* is a Ruby library that **creates HTTP headers for OAuth Authorization** using previously-obtained OAuth keys/secrets. Useful if you want to make your own HTTP request objects instead of using the ones created for you using the [commonly-used OAuth gem](http://github.com/mojodna/oauth).
